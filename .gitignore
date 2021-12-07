@@ -1,0 +1,8 @@
+workshop01/terraform.tfvars
+workshop01/terraform.tfstate
+workshop01/terraform.tfstate.backup
+day01/terraform.tfstate.backup
+workshop01/.terraform.lock.hcl
+day01/.terraform
+day01/.terraform.lock.hcl
+day01/terraform.tfstate
