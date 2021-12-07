@@ -1,20 +1,31 @@
 
-# resource "digitalocean_droplet" "my-droplet-from-terraform" {
-#   image  = var.do_image
-#   region = var.do_region
-#   size   = var.do_size
-#   name   = "mydropletfromterraform"
-# }
+resource "docker_image" "container-image" {
+  count        = length(var.containers)
+  name         = var.containers[count.index].imageName
+  keep_locally = var.containers[count.index].keepImage
+}
+resource "docker_container" "container-app" {
+  count = length(var.containers)
+  name  = var.containers[count.index].containerName
+  image = docker_image.container-image[count.index].latest
+  ports {
+    internal = var.containers[count.index].containerPort
+    external = var.containers[count.index].externalPort
+  }
+  env = var.containers[count.index].envVariables
+}
 
-# output "ipv4" {
-#   value = digitalocean_droplet.my-droplet-from-terraform.ipv4_address
-# }
+output "ContainerExposePorts" {
+  value     = join(" ", [var.ipv4dockerhost, join(", ", flatten(docker_container.container-app[*].ports[*].external))])
+  sensitive = false
+}
+
 
 data "digitalocean_ssh_key" "my-key" {
   name = "myworkshop1key"
 }
 
-resource "digitalocean_droplet" "example" {
+resource "digitalocean_droplet" "my-droplet-from-terraform" {
   image    = var.do_image
   region   = var.do_region
   size     = var.do_size
@@ -40,19 +51,18 @@ resource "digitalocean_droplet" "example" {
 
 # Local template file try out
 resource "local_file" "droplet_info" {
-  filename = "info.txt"
+  filename = "root@${digitalocean_droplet.my-droplet-from-terraform.ipv4_address}"
   content = templatefile("info.txt.tpl", {
-    ipv4        = digitalocean_droplet.example.ipv4_address
+    ipv4        = digitalocean_droplet.my-droplet-from-terraform.ipv4_address
     fingerprint = data.digitalocean_ssh_key.my-key.fingerprint
   })
   file_permission = "0644"
 }
 
-output "ipv4" {
-  value = digitalocean_droplet.example.ipv4_address
+output "ReverseProxyIpv4" {
+  value = digitalocean_droplet.my-droplet-from-terraform.ipv4_address
 }
 
 output "my-key-fingerprint" {
   value = data.digitalocean_ssh_key.my-key.fingerprint
 }
-
