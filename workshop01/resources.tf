@@ -62,7 +62,7 @@ resource "digitalocean_droplet" "my-droplet-from-terraform" {
   }
 
   provisioner "file" {
-    source      = "nginx.conf"
+    source      = local_file.nginxconf.filename // "nginx.conf"
     destination = "/etc/nginx/nginx.conf"
   }
 
