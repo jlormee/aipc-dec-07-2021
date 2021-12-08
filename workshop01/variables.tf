@@ -2,7 +2,6 @@
 variable "do_token" {
   type      = string
   sensitive = true
-  default   = "aecb46d4f5581bbcfa9c0a0570bbfa6aab558bb4e07920293286d04f72986474"
 }
 
 variable "do_image" {
@@ -22,8 +21,8 @@ variable "do_region" {
 
 
 variable "ipv4dockerhost" {
-  type = string
-  default = "http://159.223.79.113"
+  type    = string
+  default = "159.223.79.113"
 }
 
 variable "containers" {

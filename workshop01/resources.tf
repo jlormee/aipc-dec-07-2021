@@ -1,4 +1,4 @@
-
+# Docker containers
 resource "docker_image" "container-image" {
   count        = length(var.containers)
   name         = var.containers[count.index].imageName
@@ -20,7 +20,19 @@ output "ContainerExposePorts" {
   sensitive = false
 }
 
+resource "local_file" "nginxconf" {
+  filename = "nginx.conf"
+  content = templatefile("template-nginx.conf.tpl", {
+    host  = var.ipv4dockerhost
+    port0 = docker_container.container-app[0].ports[0].external
+    port1 = docker_container.container-app[1].ports[0].external
+    port2 = docker_container.container-app[2].ports[0].external
+  })
+  file_permission = "0644"
+}
 
+
+#Create digital ocean droplet
 data "digitalocean_ssh_key" "my-key" {
   name = "myworkshop1key"
 }
@@ -47,6 +59,18 @@ resource "digitalocean_droplet" "my-droplet-from-terraform" {
       "systemctl start nginx"
     ]
   }
+
+  provisioner "file" {
+    source      = "nginx.conf"
+    destination = "/etc/nginx/nginx.conf"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "/usr/sbin/nginx -s reload"
+    ]
+  }
+
 }
 
 # Local template file try out
