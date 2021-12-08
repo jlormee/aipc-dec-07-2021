@@ -1,0 +1,31 @@
+terraform {
+  // terraform version
+  required_version = ">1.0.0"
+  required_providers {
+    digitalocean = {
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.0"
+    }
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "2.15.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "2.1.0"
+    }
+  }
+}
+
+# Configure the DigitalOcean Provider
+provider "digitalocean" {
+  token = var.do_token
+}
+
+provider "docker" {
+  host = "unix:///var/run/docker.sock"
+}
+
+provider "local" {
+
+}

@@ -7,3 +7,6 @@ day01/terraform.tfstate.backup
 day01/.terraform
 day01/.terraform.lock.hcl
 day01/terraform.tfstate
+workshop02/.terraform
+workshop02/.terraform.lock.hcl
+workshop02/terraform.tfstate

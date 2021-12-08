@@ -1,0 +1,53 @@
+- name: Install Stuff
+  hosts: all
+  become: yes 
+  vars:
+   download_dir: '/usr/local/opt'
+   mysql_directory: 'mysql-8.0.26-linux-glibc2.12-x86_64'
+   dl_url: 'https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.26-linux-glibc2.12-x86_64.tar.xz'
+   grp_user_name: 'mysql'
+   apt_pkgs_to_install: ['ca-certificates', 'gnupg', 'lsb-release']
+   pkgs_to_install: ['libaio1', 'libtinfo5']
+   mysql_base_dir: '/usr/local/opt/mysql'
+  tasks:  
+  - name: Install the following packages - unzip, libaio1, libtinfo5
+    apt:
+      update_cache: yes
+      name: "{{ item }}"
+      state: latest
+    loop: "{{ pkgs_to_install }}"
+    register: result
+  - name: Docker update the apt package index and install packages to allow apt to use a repository over HTTPS
+    apt:
+      update_cache: yes
+      name: "{{ item }}"
+      state: latest
+    loop: "{{ apt_pkgs_to_install }}"
+    register: result
+  - name: Docker install docker
+    apt:
+      update_cache: yes
+      name: "docker.io"
+      state: latest
+  - name: Create a group call mysql
+    group:
+      name: "{{ grp_user_name }}"
+      state: present
+  - name: Create a user call mysql and add it to the following groups - sudo, mysql
+    user:
+      name: "{{ grp_user_name }}"
+      state: present
+      groups: mysql,sudo
+      append: yes
+  - name: Packer Add the HashiCorp GPG key.
+    shell: 'curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -'
+  - name: Packer Add the official HashiCorp Linux repository
+    shell: 'sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
+  - name: Packer Update and install
+    shell: 'sudo apt-get update && sudo apt-get install packer'
+  - name: Nginx install
+    apt:
+      update_cache: yes
+      name: "nginx"
+      state: latest
+

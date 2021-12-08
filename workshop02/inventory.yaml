@@ -1,0 +1,11 @@
+all:
+  vars:
+    ansible_user: root
+    ansible_connection: ssh
+    ansible_ssh_private_key_file: ./mykey
+
+  hosts:
+  
+    myserver-0:
+      ansible_host: 159.223.61.41
+      mysql_root_password: 
