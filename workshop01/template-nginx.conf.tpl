@@ -24,9 +24,9 @@ http {
         # server_name_in_redirect off;
         upstream apps {
           least_conn;
-          server ${host}:${port0};
-          server ${host}:${port1};
-          server ${host}:${port2};
+          %{ for p in ports }
+            server ${host}:${p}
+          %{endfor}
         }
 
         #include /etc/nginx/mime.types;

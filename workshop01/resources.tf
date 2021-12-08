@@ -23,10 +23,11 @@ output "ContainerExposePorts" {
 resource "local_file" "nginxconf" {
   filename = "nginx.conf"
   content = templatefile("template-nginx.conf.tpl", {
-    host  = var.ipv4dockerhost
-    port0 = docker_container.container-app[0].ports[0].external
-    port1 = docker_container.container-app[1].ports[0].external
-    port2 = docker_container.container-app[2].ports[0].external
+    host = var.ipv4dockerhost
+    # port0 = docker_container.container-app[0].ports[0].external
+    # port1 = docker_container.container-app[1].ports[0].external
+    # port2 = docker_container.container-app[2].ports[0].external
+    ports = flatten(docker_container.container-app[*].ports[*].external)
   })
   file_permission = "0644"
 }
