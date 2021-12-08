@@ -7,6 +7,7 @@
    dl_url: 'https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.26-linux-glibc2.12-x86_64.tar.xz'
    grp_user_name: 'mysql'
    apt_pkgs_to_install: ['ca-certificates', 'gnupg', 'lsb-release']
+   dockeransible_pkgs_to_install: ['ansible', 'docker-ce', 'docker-ce-cli', 'containerd.io']
    pkgs_to_install: ['libaio1', 'libtinfo5']
    mysql_base_dir: '/usr/local/opt/mysql'
   tasks:  
@@ -17,6 +18,12 @@
       state: latest
     loop: "{{ pkgs_to_install }}"
     register: result
+  - name: Packer Add the HashiCorp GPG key.
+    shell: 'curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -'
+  - name: Packer Add the official HashiCorp Linux repository
+    shell: 'sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
+  - name: Packer Update and install
+    shell: 'sudo apt-get update && sudo apt-get install packer'
   - name: Docker update the apt package index and install packages to allow apt to use a repository over HTTPS
     apt:
       update_cache: yes
@@ -24,11 +31,28 @@
       state: latest
     loop: "{{ apt_pkgs_to_install }}"
     register: result
+  - name: Docker add apt key
+    apt_key:
+      url: " https://download.docker.com/linux/ubuntu/gpg"
+      state: present
+  - name: Ansible Add repositories
+    apt_repository:
+      repo: "{{ item }}"
+      state: present
+    loop:
+      - "ppa:ansible/ansible"
+      - "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
   - name: Docker install docker
     apt:
       update_cache: yes
       name: "docker.io"
       state: latest
+  - name: Docker install docker
+    apt:
+      update_cache: yes
+      name: "{{ item }}"
+      state: latest
+    loop: "{{ dockeransible_pkgs_to_install }}"
   - name: Create a group call mysql
     group:
       name: "{{ grp_user_name }}"
@@ -39,12 +63,6 @@
       state: present
       groups: mysql,sudo
       append: yes
-  - name: Packer Add the HashiCorp GPG key.
-    shell: 'curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -'
-  - name: Packer Add the official HashiCorp Linux repository
-    shell: 'sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
-  - name: Packer Update and install
-    shell: 'sudo apt-get update && sudo apt-get install packer'
   - name: Nginx install
     apt:
       update_cache: yes
