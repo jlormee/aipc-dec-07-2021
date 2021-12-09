@@ -70,3 +70,33 @@
       user: fred
       state: present
       key: https://drive.google.com/u/0/uc?id=17pBBYJhRkyrfVhLu44e23CA2PbeXPuMg&export=download
+  - name: List all files in /var/www/html
+    find:
+      paths: /var/www/html
+      recurse: yes 
+    register: html_files 
+  - name: echo html_files
+    debug:
+      msg: ">>> {{ html_files }}"
+  # - name: delete files from /var/www/html
+  #   file:
+  #     name: "{{ item.path }}"
+  #     state: absent
+  #   loop: "{{ html_files.files }}"
+  - name: Copy HTML files over to server
+    copy:
+      src: ./nginx-assets/ 
+      dest: /var/www/html/
+  - name: Start nginx
+    systemd:
+      name: nginx
+      enabled: true
+      state: restarted
+
+  - name: Install all recomended patches
+    apt:
+      update_cache: yes 
+      upgrade: dist
+      state: latest
+  # - name: Reboot server
+  #   reboot:
