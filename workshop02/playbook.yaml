@@ -45,27 +45,28 @@
   - name: Docker install docker
     apt:
       update_cache: yes
-      name: "docker.io"
-      state: latest
-  - name: Docker install docker
-    apt:
-      update_cache: yes
       name: "{{ item }}"
       state: latest
     loop: "{{ dockeransible_pkgs_to_install }}"
-  - name: Create a group call mysql
-    group:
-      name: "{{ grp_user_name }}"
-      state: present
-  - name: Create a user call mysql and add it to the following groups - sudo, mysql
-    user:
-      name: "{{ grp_user_name }}"
-      state: present
-      groups: mysql,sudo
-      append: yes
   - name: Nginx install
     apt:
       update_cache: yes
       name: "nginx"
       state: latest
-
+  - name: Create user fred
+    user: 
+      name: fred
+      shell: /bin/bash
+      groups: docker,sudo
+      append: yes
+      state: present
+  - name: add ssh keys to fred
+    authorized_key:
+      user: fred
+      state: present
+      key: "{{ lookup('file', './mykey.pub') }}"
+  - name: add instructor's SSH key
+    authorized_key:
+      user: fred
+      state: present
+      key: https://drive.google.com/u/0/uc?id=17pBBYJhRkyrfVhLu44e23CA2PbeXPuMg&export=download
