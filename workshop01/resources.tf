@@ -36,6 +36,7 @@ resource "local_file" "nginxconf" {
 #Create digital ocean droplet
 data "digitalocean_ssh_key" "my-key" {
   name = "myworkshop1key"
+  # Set up in digital ocean this key
 }
 
 resource "digitalocean_droplet" "my-droplet-from-terraform" {

@@ -10,3 +10,7 @@ day01/terraform.tfstate
 workshop02/.terraform
 workshop02/.terraform.lock.hcl
 workshop02/terraform.tfstate
+workshop03/build/setup/.terraform
+workshop03/build/setup/.terraform.lock.hcl
+workshop03/build/setup/terraform.tfstate
+workshop03/build/setup/terraform.tfvars.json
