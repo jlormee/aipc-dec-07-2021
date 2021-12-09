@@ -1,5 +1,5 @@
 data "digitalocean_ssh_key" "my-key" {
-  name = "mykey"
+  name = "myworkshop1key"
 }
 
 data "digitalocean_image" "aipc-server" {

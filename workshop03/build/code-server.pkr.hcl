@@ -2,6 +2,7 @@
 variable DO_token {
     type = string
     sensitive = true
+    default = "4b4991139933a810c5fcb3574ff3b64c100d68f52aef7f7d7e7369f654e91bbc"
 }
 
 variable DO_region {
@@ -21,6 +22,7 @@ variable DO_size {
 
 variable public_key {
    type = string
+   default = "../../mykey.pub"
 }
 
 // builders

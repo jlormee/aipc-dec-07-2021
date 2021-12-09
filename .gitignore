@@ -14,3 +14,7 @@ workshop03/build/setup/.terraform
 workshop03/build/setup/.terraform.lock.hcl
 workshop03/build/setup/terraform.tfstate
 workshop03/build/setup/terraform.tfvars.json
+workshop03/deploy/.terraform
+workshop03/deploy/.terraform.lock.hcl
+workshop03/deploy/terraform.tfstate
+workshop03/deploy/terraform.tfvars.json
